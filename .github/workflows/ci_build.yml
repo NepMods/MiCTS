@@ -26,12 +26,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: libxposed/api
+          ref: master
           path: libxposed/api
 
       - name: Checkout libxposed/service
         uses: actions/checkout@v4
         with:
           repository: libxposed/service
+          ref: master
           path: libxposed/service
 
       - name: Setup Java 21
@@ -70,7 +72,14 @@ jobs:
       - name: Find debug APK
         run: |
           APK=$(find app/build/outputs/apk/debug -name '*.apk' | head -n 1)
+
+          if [ -z "$APK" ]; then
+            echo "No debug APK found!"
+            exit 1
+          fi
+
           echo "APK=$APK" >> "$GITHUB_ENV"
+          echo "Found APK: $APK"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
